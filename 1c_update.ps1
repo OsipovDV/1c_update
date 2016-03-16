@@ -165,8 +165,9 @@ Function UnBlock1CDB([string] $1c_conn_str)
 ########################################################################################################################################################
 $1c_exec_path = '"c:\Program Files (x86)\1cv8\8.3.6.2299\bin\1cv8.exe"'
 $jobfile_path = "\\ra-fs04\1c_config_update$"
-$updatelog_path = "\\ra-fs04\1c_config_update$\test.log"
+$updatelog_path = "\\ra-fs04\1c_config_update$\" + (Get-Date).ToShortDateString() + ".log"
 $SMTPServer = "mx2.rusalco.com"
+$1C_BlockCode = "L0CK3D"
 [bool] $global:SchReg = $False
 #
 
@@ -211,15 +212,15 @@ foreach ($job in $jobfiles)
 
     ## Ѕлокируем базу дл€ пользователей
     ########################################################################################################################################################
-    ## "c:\Program Files (x86)\1cv8\8.3.6.2299\bin\1cv8.exe" enterprise /S "RA-1c02:1641\UPP_GST_D_Osipov" /C"«авершить–аботуѕользователей" /DisableStartupMessages /AU-
+    ##
 
     if ($IsDynamic -eq $False) ## ≈сли обновл€ем динамически, пользователей выгон€ть не надо
     {
     ##  “аймаут на вс€кий пожарный случай, если накос€чили с файлом описанием обновлени€. 5 минут на отмену
-#        Start-Sleep -s 300
+        Start-Sleep -s 300
         Write-EventLog ЦLogName Application ЦSource У1C Update scriptФ ЦEntryType Information ЦEventID 100 ЦMessage УЅлокируем пользователей в базе $1CDBPATH.Ф
         $Global:SchRegDen = $null
-        Block1CDB $1CDBPATH "1122334455"     
+        Block1CDB $1CDBPATH $1C_BlockCode
 
     }
     else
@@ -231,9 +232,10 @@ foreach ($job in $jobfiles)
     ## «апускаем обновление базы 1с (опционально, рестартим сервис 1с)
     ########################################################################################################################################################
     #"c:\Program Files (x86)\1cv8\8.3.6.2299\bin\1cv8.exe" config /S "RA-1c02:1641\UPP_GST_D_Osipov"  /UpdateCfg "d:\1Cv8-2015-12-03-14-59_10.cf" /UpdateDBCfg /Out"D:\LOG1C\log.txt"
+
     Write-EventLog ЦLogName Application ЦSource У1C Update scriptФ ЦEntryType Information ЦEventID 200 ЦMessage У«апускаем обновление базы $1CDBPATH файлом конфигурации $1CUPDATEPATH. ѕуть до лог-файла обновлени€ $updatelog_pathФ
 
-    $args =  " config /S " + $1CDBPATH + " /UpdateCfg " + $1CUPDATEPATH + " /UpdateDBCfg  /UC1122334455 " + " /Out " + $updatelog_path 
+    $args =  " config /S " + $1CDBPATH + ' /UpdateCfg "' + $1CUPDATEPATH + '" /UpdateDBCfg  /UC' + $1C_BlockCode + " /Out " + $updatelog_path 
 
     $starttime = Get-Date
     Start-Process $1c_exec_path -argumentlist $args -wait
@@ -244,7 +246,7 @@ foreach ($job in $jobfiles)
 
     ## –азрешаем доступ в базу дл€ пользователей
     ########################################################################################################################################################
-    ## c:\Program Files (x86)\1cv8\8.3.6.2299\bin\1cv8.exe" enterprise /S "RA-1c02:1641\UPP_GST_D_Osipov" /C"–азрешить–аботуѕользователей" /UC" од–азрешени€"
+    ##
 
     if ($IsDynamic -eq $False)
     {
