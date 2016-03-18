@@ -204,7 +204,7 @@ foreach ($job in $jobfiles)
     if ((Get-Date) -lt (Get-Date($1CUPDATEDATETIME)) )
     { 
         ## ¬рем€ обновлени€ еще не подошло, переходим к следующему
-        break
+        continue
     }
     
     
@@ -216,8 +216,13 @@ foreach ($job in $jobfiles)
 
     if ($IsDynamic -eq $False) ## ≈сли обновл€ем динамически, пользователей выгон€ть не надо
     {
-    ##  “аймаут на вс€кий пожарный случай, если накос€чили с файлом описанием обновлени€. 5 минут на отмену
+    ##  “аймаут на вс€кий пожарный случай, если накос€чили с файлом описанием обновлени€. 5 минут на отмену, достаточно переименовать\удалить файл задание
         Start-Sleep -s 300
+        if ( (Test-Path -path $job.FullName)  -eq $false ) 
+        {
+            Send-MailMessage -SmtpServer  $SMTPServer -Encoding ([System.Text.Encoding]::UTF8) -From "1C_Update_script@roust.com" -To $RECIPIENTTO -Subject "ќбновление 1— базы $1CDBPATH ќ“ћ≈Ќ≈Ќќ" -Body "‘айл-задание был переименован или удален, обновление отменено."
+            continue
+        }
         Write-EventLog ЦLogName Application ЦSource У1C Update scriptФ ЦEntryType Information ЦEventID 100 ЦMessage УЅлокируем пользователей в базе $1CDBPATH.Ф
         $Global:SchRegDen = $null
         Block1CDB $1CDBPATH $1C_BlockCode
