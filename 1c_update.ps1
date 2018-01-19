@@ -2,7 +2,7 @@ $Global:SchRegDen = $null
 
 ##########################################################################################################################################
 #
-#  Ôóíêöèÿ Block1CDB 1 ïàðàìåòð ñòðîêà ïîäêëþ÷åíèÿ ê áàçå â ôîðìàòå "ra-1c02:1641\some_db" è âòîðîé ïàðàìåòð ïàðîëü íà ïîäêëþ÷åíèå ê áàçå 1ñ
+#  Ôóíêöèÿ Block1CDB 1 ïàðàìåòð ñòðîêà ïîäêëþ÷åíèÿ ê áàçå â ôîðìàòå "srv-1c02:1641\some_db" è âòîðîé ïàðàìåòð ïàðîëü íà ïîäêëþ÷åíèå ê áàçå 1ñ
 #  ÂÍÈÌÀÍÈÅ - èñïîëüçóåòñÿ ãëîáàëüíûé ïàðàìåòð $global:SchReg äëÿ îïðåäåëåíèÿ áûëà ëè âêëþ÷åíà áëîêèðîâêà ðåãëàìåíòíûõ çàäàíèé äî çàïóñêà
 #
 
@@ -81,7 +81,7 @@ Function Block1CDB([string] $1c_conn_str,[string] $db_code)
 
 ##########################################################################################################################################
 #
-#  Ôóíêöèÿ UnBlock1CDB 1 ïàðàìåòð ñòðîêà ïîäêëþ÷åíèÿ ê áàçå â ôîðìàòå "ra-1c02:1641\some_db"
+#  Ôóíêöèÿ UnBlock1CDB 1 ïàðàìåòð ñòðîêà ïîäêëþ÷åíèÿ ê áàçå â ôîðìàòå "srv-1c02:1641\some_db"
 #  ÂÍÈÌÀÍÈÅ - èñïîëüçóåòñÿ ãëîáàëüíûé ïàðàìåòð $global:SchReg äëÿ îïðåäåëåíèÿ áûëà ëè âêëþ÷åíà áëîêèðîâêà ðåãëàìåíòíûõ çàäàíèé äî çàïóñêà
 #
 
@@ -164,10 +164,10 @@ Function UnBlock1CDB([string] $1c_conn_str)
 ## Îïðåäåëÿåì êîíñòàíòû
 ########################################################################################################################################################
 $1c_exec_path = '"c:\Program Files (x86)\1cv8\8.3.6.2299\bin\1cv8.exe"'
-$jobfile_path = "\\ra-fs04\1c_config_update$"
-$updatelog_path = "\\ra-fs04\1c_config_update$\" + (Get-Date).ToShortDateString() + ".log"
-$SMTPServer = "mx2.rusalco.com"
-$1C_BlockCode = "L0CK3D"
+$jobfile_path = "\\srv-fs04\1c_config_update$"
+$updatelog_path = "\\srv-fs04\1c_config_update$\" + (Get-Date).ToShortDateString() + ".log"
+$SMTPServer = "mx2.some.local"
+$1C_BlockCode = "1CBLOCKED"
 [bool] $global:SchReg = $False
 #
 
@@ -236,7 +236,7 @@ foreach ($job in $jobfiles)
 
     ## Çàïóñêàåì îáíîâëåíèå áàçû 1ñ (îïöèîíàëüíî, ðåñòàðòèì ñåðâèñ 1ñ)
     ########################################################################################################################################################
-    #"c:\Program Files (x86)\1cv8\8.3.6.2299\bin\1cv8.exe" config /S "RA-1c02:1641\UPP_GST_D_Osipov"  /UpdateCfg "d:\1Cv8-2015-12-03-14-59_10.cf" /UpdateDBCfg /Out"D:\LOG1C\log.txt"
+    #"c:\Program Files (x86)\1cv8\8.3.6.2299\bin\1cv8.exe" config /S "srv-1c02:1641\UPP_GST_D_Osipov"  /UpdateCfg "d:\1Cv8-2015-12-03-14-59_10.cf" /UpdateDBCfg /Out"D:\LOG1C\log.txt"
 
     Write-EventLog –LogName Application –Source “1C Update script” –EntryType Information –EventID 200 –Message “Çàïóñêàåì îáíîâëåíèå áàçû $1CDBPATH ôàéëîì êîíôèãóðàöèè $1CUPDATEPATH. Ïóòü äî ëîã-ôàéëà îáíîâëåíèÿ $updatelog_path”
 
