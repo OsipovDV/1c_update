@@ -2,15 +2,15 @@ $Global:SchRegDen = $null
 
 ##########################################################################################################################################
 #
-#  Ôóíêöèÿ Block1CDB 1 ïàðàìåòð ñòðîêà ïîäêëþ÷åíèÿ ê áàçå â ôîðìàòå "srv-1c02:1641\some_db" è âòîðîé ïàðàìåòð ïàðîëü íà ïîäêëþ÷åíèå ê áàçå 1ñ
-#  ÂÍÈÌÀÍÈÅ - èñïîëüçóåòñÿ ãëîáàëüíûé ïàðàìåòð $global:SchReg äëÿ îïðåäåëåíèÿ áûëà ëè âêëþ÷åíà áëîêèðîâêà ðåãëàìåíòíûõ çàäàíèé äî çàïóñêà
+#  Функция Block1CDB 1 параметр строка подключения к базе в формате "srv-1c02:1641\some_db" и второй параметр пароль на подключение к базе 1с
+#  ВНИМАНИЕ - используется глобальный параметр $global:SchReg для определения была ли включена блокировка регламентных заданий до запуска
 #
 
 Function Block1CDB([string] $1c_conn_str,[string] $db_code)
 {
     ##########################################################################################################################################
     #
-    #  Ðàçáèðàåì ñòðîêó ïîäêëþ÷åíèÿ íà èìÿ ñåðâåðà, ïîðò è èìÿ áàçû
+    #  Разбираем строку подключения на имя сервера, порт и имя базы
     #
 
     
@@ -30,7 +30,7 @@ Function Block1CDB([string] $1c_conn_str,[string] $db_code)
 
     ##########################################################################################################################################
     #
-    #  Ïîäêëþ÷àåìñÿ ê êëàñòåðó 1ñ
+    #  Подключаемся к кластеру 1с
     #
 
     $com_1c = New-Object -com v83.COMConnector
@@ -49,7 +49,7 @@ Function Block1CDB([string] $1c_conn_str,[string] $db_code)
 
     ##########################################################################################################################################
     #
-    #  Ïîäêëþ÷àåìñÿ ê áàçå 1ñ, çàïðåùàåì ïîäêëþ÷åíèå ïîëüçîâàòåëåé, áëîêèðóåì ðåãëàìåíòíûå çàäàíèÿ
+    #  Подключаемся к базе 1с, запрещаем подключение пользователей, блокируем регламентные задания
     #
                  if ($ib.Name -eq $dbname)
                  {
@@ -62,7 +62,7 @@ Function Block1CDB([string] $1c_conn_str,[string] $db_code)
 
     ##########################################################################################################################################
     #
-    #  Âûãîíÿåì ïîëüçîâàòåëåé
+    #  Выгоняем пользователей
     #
                      $user_connections = $conn_2wp.GetInfoBaseConnections($ib)
                         foreach( $uc in $user_connections)
@@ -81,8 +81,8 @@ Function Block1CDB([string] $1c_conn_str,[string] $db_code)
 
 ##########################################################################################################################################
 #
-#  Ôóíêöèÿ UnBlock1CDB 1 ïàðàìåòð ñòðîêà ïîäêëþ÷åíèÿ ê áàçå â ôîðìàòå "srv-1c02:1641\some_db"
-#  ÂÍÈÌÀÍÈÅ - èñïîëüçóåòñÿ ãëîáàëüíûé ïàðàìåòð $global:SchReg äëÿ îïðåäåëåíèÿ áûëà ëè âêëþ÷åíà áëîêèðîâêà ðåãëàìåíòíûõ çàäàíèé äî çàïóñêà
+#  Функция UnBlock1CDB 1 параметр строка подключения к базе в формате "srv-1c02:1641\some_db"
+#  ВНИМАНИЕ - используется глобальный параметр $global:SchReg для определения была ли включена блокировка регламентных заданий до запуска
 #
 
 Function UnBlock1CDB([string] $1c_conn_str)
@@ -90,7 +90,7 @@ Function UnBlock1CDB([string] $1c_conn_str)
 
     ##########################################################################################################################################
     #
-    #  Ðàçáèðàåì ñòðîêó ïîäêëþ÷åíèÿ íà èìÿ ñåðâåðà, ïîðò è èìÿ áàçû
+    #  Разбираем строку подключения на имя сервера, порт и имя базы
     #
 
     $servername=$1c_conn_str.Substring(0,$1c_conn_str.IndexOf("\"))
@@ -108,7 +108,7 @@ Function UnBlock1CDB([string] $1c_conn_str)
 
     ##########################################################################################################################################
     #
-    #  Ïîäêëþ÷àåìñÿ ê êëàñòåðó 1ñ
+    #  Подключаемся к кластеру 1с
     #
 
     $com_1c = New-Object -com v83.COMConnector
@@ -127,7 +127,7 @@ Function UnBlock1CDB([string] $1c_conn_str)
 
     ##########################################################################################################################################
     #
-    #  Ïîäêëþ÷àåìñÿ ê áàçå 1ñ, çàïðåùàåì ïîäêëþ÷åíèå ïîëüçîâàòåëåé, áëîêèðóåì ðåãëàìåíòíûå çàäàíèÿ
+    #  Подключаемся к базе 1с, запрещаем подключение пользователей, блокируем регламентные задания
     #
 
                 if ($ib.Name -eq $dbname)
@@ -139,7 +139,7 @@ Function UnBlock1CDB([string] $1c_conn_str)
 
     ##########################################################################################################################################
     #
-    #  Âûãîíÿåì ïîëüçîâàòåëåé
+    #  Выгоняем пользователей
     #
                      $user_connections = $conn_2wp.GetInfoBaseConnections($ib)
                         foreach( $uc in $user_connections)
@@ -156,12 +156,12 @@ Function UnBlock1CDB([string] $1c_conn_str)
 }
 
 
-## Äëÿ ëîãèðîâàíèÿ â Event Log íàäî âûïîëíèòü:
+## Для логирования в Event Log надо выполнить:
 ## New-EventLog –LogName Application –Source “1C Update script”
 ########################################################################################################################################################
 ##
 ##
-## Îïðåäåëÿåì êîíñòàíòû
+## Определяем константы
 ########################################################################################################################################################
 $1c_exec_path = '"c:\Program Files (x86)\1cv8\8.3.6.2299\bin\1cv8.exe"'
 $jobfile_path = "\\srv-fs04\1c_config_update$"
@@ -172,24 +172,24 @@ $1C_BlockCode = "1CBLOCKED"
 #
 
 
-## Èùåì ôàéëû
+## Ищем файлы
 ########################################################################################################################################################
 $jobfiles = Get-ChildItem ($jobfile_path + "\*.upd")
 
 
-## Îáíîâëÿåì ïî î÷åðåäè
+## Обновляем по очереди
 ########################################################################################################################################################
 foreach ($job in $jobfiles)
 {
 
-    ## Ïàðñèì ôàéë-çàäà÷ó
+    ## Парсим файл-задачу
     ########################################################################################################################################################
-    # ïóòü äî áàçû
-    # ïóòü äî ôàéëà îáíîâëåíèÿ
-    # äàòà è âðåìÿ îáíîâëåíèÿ
-    # êîìó ñëàòü îò÷åòû
-    # "äèíàìè÷åñêè" èëè íåò
-
+    # путь до базы
+    # путь до файла обновления
+    # дата и время обновления
+    # кому слать отчеты
+    # "динамически" или нет
+    
     $content=Get-Content $job
     if ($content.Count -ge 4)
     {
@@ -198,32 +198,32 @@ foreach ($job in $jobfiles)
         $1CUPDATEPATH=$content[1]
         $1CUPDATEDATETIME=$content[2]
         $RECIPIENTTO=$content[3]
-        if ($content[4] -eq "äèíàìè÷åñêè") { $IsDynamic=$True } else { $IsDynamic=$False}
+        if ($content[4] -eq "динамически") { $IsDynamic=$True } else { $IsDynamic=$False}
     
     
     if ((Get-Date) -lt (Get-Date($1CUPDATEDATETIME)) )
     { 
-        ## Âðåìÿ îáíîâëåíèÿ åùå íå ïîäîøëî, ïåðåõîäèì ê ñëåäóþùåìó
+        ## Время обновления еще не подошло, переходим к следующему
         continue
     }
     
     
-    Send-MailMessage -SmtpServer  $SMTPServer -Encoding ([System.Text.Encoding]::UTF8) -From "1C_Update_script@some.local" -To $RECIPIENTTO -Subject "Îáíîâëåíèå 1Ñ áàçû $1CDBPATH çàïóùåíî" -Body "Îáíîâëÿåì áàçó $1CDBPATH ôàéëîì êîíôèãóðàöèè $1CUPDATEPATH ïîñëå $1CUPDATEDATETIME äèíàìè÷åñêè:$IsDynamic"
+    Send-MailMessage -SmtpServer  $SMTPServer -Encoding ([System.Text.Encoding]::UTF8) -From "1C_Update_script@some.local" -To $RECIPIENTTO -Subject "Обновление 1С базы $1CDBPATH запущено" -Body "Обновляем базу $1CDBPATH файлом конфигурации $1CUPDATEPATH после $1CUPDATEDATETIME динамически:$IsDynamic"
 
-    ## Áëîêèðóåì áàçó äëÿ ïîëüçîâàòåëåé
+    ## Блокируем базу для пользователей
     ########################################################################################################################################################
     ##
 
-    if ($IsDynamic -eq $False) ## Åñëè îáíîâëÿåì äèíàìè÷åñêè, ïîëüçîâàòåëåé âûãîíÿòü íå íàäî
+    if ($IsDynamic -eq $False) ## Если обновляем динамически, пользователей выгонять не надо
     {
-    ##  Òàéìàóò íà âñÿêèé ïîæàðíûé ñëó÷àé, åñëè íàêîñÿ÷èëè ñ ôàéëîì îïèñàíèåì îáíîâëåíèÿ. 5 ìèíóò íà îòìåíó, äîñòàòî÷íî ïåðåèìåíîâàòü\óäàëèòü ôàéë çàäàíèå
+    ##  Таймаут на всякий пожарный случай, если накосячили с файлом описанием обновления. 5 минут на отмену, достаточно переименовать\удалить файл задание
         Start-Sleep -s 300
         if ( (Test-Path -path $job.FullName)  -eq $false ) 
         {
-            Send-MailMessage -SmtpServer  $SMTPServer -Encoding ([System.Text.Encoding]::UTF8) -From "1C_Update_script@some.local" -To $RECIPIENTTO -Subject "Îáíîâëåíèå 1Ñ áàçû $1CDBPATH ÎÒÌÅÍÅÍÎ" -Body "Ôàéë-çàäàíèå áûë ïåðåèìåíîâàí èëè óäàëåí, îáíîâëåíèå îòìåíåíî."
+            Send-MailMessage -SmtpServer  $SMTPServer -Encoding ([System.Text.Encoding]::UTF8) -From "1C_Update_script@some.local" -To $RECIPIENTTO -Subject "Обновление 1С базы $1CDBPATH ОТМЕНЕНО" -Body "Файл-задание был переименован или удален, обновление отменено."
             continue
         }
-        Write-EventLog –LogName Application –Source “1C Update script” –EntryType Information –EventID 100 –Message “Áëîêèðóåì ïîëüçîâàòåëåé â áàçå $1CDBPATH.”
+        Write-EventLog –LogName Application –Source “1C Update script” –EntryType Information –EventID 100 –Message “Блокируем пользователей в базе $1CDBPATH.”
         $Global:SchRegDen = $null
         Block1CDB $1CDBPATH $1C_BlockCode
 
@@ -234,11 +234,11 @@ foreach ($job in $jobfiles)
     }
  
 
-    ## Çàïóñêàåì îáíîâëåíèå áàçû 1ñ (îïöèîíàëüíî, ðåñòàðòèì ñåðâèñ 1ñ)
+    ## Запускаем обновление базы 1с (опционально, рестартим сервис 1с)
     ########################################################################################################################################################
     #"c:\Program Files (x86)\1cv8\8.3.6.2299\bin\1cv8.exe" config /S "srv-1c02:1641\UPP_GST_D_Osipov"  /UpdateCfg "d:\1Cv8-2015-12-03-14-59_10.cf" /UpdateDBCfg /Out"D:\LOG1C\log.txt"
 
-    Write-EventLog –LogName Application –Source “1C Update script” –EntryType Information –EventID 200 –Message “Çàïóñêàåì îáíîâëåíèå áàçû $1CDBPATH ôàéëîì êîíôèãóðàöèè $1CUPDATEPATH. Ïóòü äî ëîã-ôàéëà îáíîâëåíèÿ $updatelog_path”
+    Write-EventLog –LogName Application –Source “1C Update script” –EntryType Information –EventID 200 –Message “Запускаем обновление базы $1CDBPATH файлом конфигурации $1CUPDATEPATH. Путь до лог-файла обновления $updatelog_path”
 
     $args =  " config /S " + $1CDBPATH + ' /UpdateCfg "' + $1CUPDATEPATH + '" /UpdateDBCfg  /UC' + $1C_BlockCode + " /Out " + $updatelog_path 
 
@@ -246,20 +246,20 @@ foreach ($job in $jobfiles)
     Start-Process $1c_exec_path -argumentlist $args -wait
     $updatetime = (Get-Date) - $starttime
     
-    Write-EventLog –LogName Application –Source “1C Update script” –EntryType Information –EventID 201 –Message “Îáíîâëåíèå áàçû $1CDBPATH çàâåðøåíî çà $updatetime”
+    Write-EventLog –LogName Application –Source “1C Update script” –EntryType Information –EventID 201 –Message “Обновление базы $1CDBPATH завершено за $updatetime”
 
 
-    ## Ðàçðåøàåì äîñòóï â áàçó äëÿ ïîëüçîâàòåëåé
+    ## Разрешаем доступ в базу для пользователей
     ########################################################################################################################################################
     ##
 
     if ($IsDynamic -eq $False)
     {
-        Write-EventLog –LogName Application –Source “1C Update script” –EntryType Information –EventID 101 –Message “Ðàçðåøàåì ïîëüçîâàòåëÿì ðàáîòó ñ áàçîé $1CDBPATH.”
+        Write-EventLog –LogName Application –Source “1C Update script” –EntryType Information –EventID 101 –Message “Разрешаем пользователям работу с базой $1CDBPATH.”
         UnBlock1CDB $1CDBPATH
     }
     
-    Send-MailMessage -SmtpServer $SMTPServer -Encoding ([System.Text.Encoding]::UTF8) -From "1C_Update_script@some.local" -To $RECIPIENTTO -Subject "Îáíîâëåíèå 1Ñ áàçû $1CDBPATH çàâåðøåíî" -Body "Îáíîâëåíèå áàçû $1CDBPATH çàâåðøåíî, âî âëîæåíèè îò÷åò î îáíîâëåíèè." -Attachments "$updatelog_path"
+    Send-MailMessage -SmtpServer $SMTPServer -Encoding ([System.Text.Encoding]::UTF8) -From "1C_Update_script@some.local" -To $RECIPIENTTO -Subject "Обновление 1С базы $1CDBPATH завершено" -Body "Обновление базы $1CDBPATH завершено, во вложении отчет о обновлении." -Attachments "$updatelog_path"
     
     If (Test-Path ($job.FullName + ".done"))
     { 
